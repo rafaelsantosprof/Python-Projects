@@ -14,3 +14,5 @@ E armazena-las em um arquivo.
 
 Deverá retornar uma lista com os nomes, a maior e a menor nota e a média de cada aluno; também deverá retornar a média da turma.
 
+
+Desenvolvido por: Rafael Oliveira dos Santos
