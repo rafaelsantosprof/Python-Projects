@@ -12,7 +12,11 @@ def carregar_sala(numero_sala):
     caminho = obter_caminho_sala(numero_sala)
     if os.path.exists(caminho):
         with open(caminho, "r", encoding="utf-8") as arquivo:
-            return json.load(arquivo)
+            dados = json.load(arquivo)
+        # compatibilidade com formato antigo (dict de alunos)
+        if isinstance(dados, dict):
+            return [{"nome": nome, "notas": notas} for nome, notas in dados.items()]
+        return dados
     return None
 
 def salvar_sala(numero_sala, dados_sala):
@@ -26,7 +30,7 @@ def cadastrar_ou_editar_sala():
     
     if dados_sala is None:
         print(f"Criando cadastro para a Sala {numero_sala}.")
-        dados_sala = {}
+        dados_sala = []
     else:
         print(f"Editando a Sala {numero_sala} existente.")
     
@@ -38,7 +42,7 @@ def cadastrar_ou_editar_sala():
         for i in range(1, 7):
             nota = float(input(f"Digite a nota {i} de {nome}: "))
             notas.append(nota)
-        dados_sala[nome] = notas
+        dados_sala.append({"nome": nome, "notas": notas})
         
     salvar_sala(numero_sala, dados_sala)
     print(f"Dados da Sala {numero_sala} salvos com sucesso!")
@@ -85,6 +89,24 @@ def visualizar_media_geral_turma():
     print(f"\nA média geral da Sala {numero_sala} é: {media_geral:.2f}")
 
 
+def excluir_aluno():
+    numero_sala = input("Digite o número da sala onde o aluno está matriculado: ").strip()
+    dados_sala = carregar_sala(numero_sala)
+    
+    if dados_sala is None:
+        print("\nSala não encontrada!")
+        return
+        
+    nome_aluno = input("Digite o nome exato do aluno que deseja excluir: ").strip()
+    
+    if nome_aluno in dados_sala:
+        dados_sala.pop(nome_aluno)
+        salvar_sala(numero_sala, dados_sala)
+        print(f"\nAluno '{nome_aluno}' excluído com sucesso!")
+    else:
+        print(f"\nAluno '{nome_aluno}' não foi encontrado nesta sala.")
+
+
 def excluir_sala():
     numero_sala = input("Digite o número da sala que deseja excluir: ")
     caminho = obter_caminho_sala(numero_sala)
@@ -103,8 +125,9 @@ def menu_principal():
         print("1. Cadastrar ou Editar uma Sala")
         print("2. Ver Notas, Médias, Maior e Menor por Aluno")
         print("3. Ver Média Geral de uma Turma")
-        print("4. Excluir sala")
-        print("5. Sair")
+        print("4. Excluir aluno")
+        print("5. Excluir sala")
+        print("6. Sair")
         
         opcao = input("Escolha uma opção: ")
         
@@ -115,8 +138,10 @@ def menu_principal():
         elif opcao == "3":
             visualizar_media_geral_turma()
         elif opcao == "4":
-            excluir_sala()
+            excluir_aluno()
         elif opcao == "5":
+            excluir_sala()
+        elif opcao == "6":
             print("Saindo do sistema...")
             break
         else:
