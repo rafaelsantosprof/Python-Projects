@@ -84,6 +84,18 @@ def visualizar_media_geral_turma():
     media_geral = soma_todas_notas / total_notas
     print(f"\nA média geral da Sala {numero_sala} é: {media_geral:.2f}")
 
+
+def excluir_sala():
+    numero_sala = input("Digite o número da sala que deseja excluir: ")
+    caminho = obter_caminho_sala(numero_sala)
+    
+    if os.path.exists(caminho):
+        os.remove(caminho)
+        print(f"Sala {numero_sala} excluída com sucesso!")
+    else:
+        print("\nSala não encontrada!")
+
+
 def menu_principal():
     criar_pasta()
     while True:
@@ -91,7 +103,8 @@ def menu_principal():
         print("1. Cadastrar ou Editar uma Sala")
         print("2. Ver Notas, Médias, Maior e Menor por Aluno")
         print("3. Ver Média Geral de uma Turma")
-        print("4. Sair")
+        print("4. Excluir sala")
+        print("5. Sair")
         
         opcao = input("Escolha uma opção: ")
         
@@ -102,6 +115,8 @@ def menu_principal():
         elif opcao == "3":
             visualizar_media_geral_turma()
         elif opcao == "4":
+            excluir_sala()
+        elif opcao == "5":
             print("Saindo do sistema...")
             break
         else:
